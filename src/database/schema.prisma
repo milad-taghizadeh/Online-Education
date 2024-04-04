@@ -14,8 +14,60 @@ datasource db {
 }
 
 model Student {
-  id        String @id @db.Uuid
-  firstName String @map("first_name")
-  lastName  String @map("last_name")
-  
+  id        Int      @id @default(autoincrement())
+  firstName String   @map("first_name")
+  lastName  String   @map("last_name")
+  address   String
+  gender    String
+  email     String   @unique
+  phone     Int      @unique
+  birthDate String   @map("birth_date")
+  city      String
+  courses   Course[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Teacher {
+  id           Int       @id @default(autoincrement())
+  firstName    String    @map("first_name")
+  lastName     String    @map("last_name")
+  address      String
+  gender       String
+  email        String    @unique
+  phone        Int       @unique
+  birthDate    String    @map("birth_date")
+  city         String
+  aboutTeacher String    @map("about_teacher")
+  isBlueVerif  Boolean   @default(false) @map("is_blue_verif")
+  isGoldVerif  Boolean   @default(false) @map("is_gold_verif")
+  courses      Course[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  Category     Category? @relation(fields: [categoryId], references: [id])
+  categoryId   Int?
+}
+
+model Course {
+  id              Int      @id @default(autoincrement())
+  courseName      String   @map("course_name")
+  courseNumber    Int      @unique @map("course_number")
+  courseTimeStart String   @map("course_time_start")
+  courseTimeEnd   String   @map("course_time_end")
+  courseStatus    String   @default("Waiting to start") @map("course_status")
+  Teacher         Teacher? @relation(fields: [teacherId], references: [id])
+  teacherId       Int?
+  Student         Student? @relation(fields: [studentId], references: [id])
+  studentId       Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Category {
+  id           Int       @id @default(autoincrement())
+  categoryName String    @map("category_name")
+  parent       String?
+  teachers     Teacher[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
