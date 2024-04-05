@@ -14,46 +14,59 @@ datasource db {
 }
 
 model Student {
-  id        String   @id @db.Uuid
-  firstName String   @map("first_name")
-  lastName  String   @map("last_name")
-  address   String
-  gender    Gender
-  email     String   @unique
-  phone     Int      @unique
-  birthDate String   @map("birth_date")
-  courses   Course[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String   @id @default(uuid())
+  firstName       String   @map("first_name")
+  lastName        String   @map("last_name")
+  address         String
+  gender          Gender
+  email           String   @unique
+  phone           Int      @unique
+  isPhoneVerified Boolean  @default(false)
+  birthDate       String   @map("birth_date")
+  courses         Course[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  Otp             Otp[]
 }
 
 model Teacher {
-  id           String         @id @db.Uuid
-  firstName    String         @map("first_name")
-  lastName     String         @map("last_name")
-  address      String
-  gender       Gender
-  teachingType TeachingType   @default(OFFILINE) @map("teaching_type")
-  email        String         @unique
-  phone        Int            @unique
-  birthDate    String         @map("birth_date")
-  city         String
-  aboutTeacher String         @map("about_teacher")
-  Verification Verification
-  courses      Course[]
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  Category     Category?      @relation(fields: [categoryId], references: [id])
-  categoryId   String?
-  Grade        Grade?         @relation(fields: [gradeId], references: [id])
-  gradeId      String?        @db.Uuid
-  Lesson       Lesson?        @relation(fields: [lessonId], references: [id])
-  lessonId     String?        @db.Uuid
-  CorseRequest CorseRequest[]
+  id              String         @id @default(uuid())
+  firstName       String         @map("first_name")
+  lastName        String         @map("last_name")
+  address         String
+  gender          Gender
+  teachingType    TeachingType   @default(OFFILINE) @map("teaching_type")
+  email           String         @unique
+  phone           Int            @unique
+  isPhoneVerified Boolean        @default(false)
+  birthDate       String         @map("birth_date")
+  city            String
+  aboutTeacher    String         @map("about_teacher")
+  Verification    Verification
+  courses         Course[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  Category        Category?      @relation(fields: [categoryId], references: [id])
+  categoryId      String?
+  Grade           Grade?         @relation(fields: [gradeId], references: [id])
+  gradeId         String?
+  Lesson          Lesson?        @relation(fields: [lessonId], references: [id])
+  lessonId        String?
+  CorseRequest    CorseRequest[]
+}
+
+model Otp {
+  id        String   @id @default(uuid())
+  owner     Student  @relation(fields: [studentId], references: [id])
+  studentId String
+  code      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expiresAt DateTime @db.Timestamp(5)
 }
 
 model Course {
-  id              String       @id @db.Uuid
+  id              String       @id @default(uuid())
   courseName      String       @map("course_name")
   courseNumber    Int          @unique @map("course_number")
   courseTimeStart String       @map("course_time_start")
@@ -69,51 +82,51 @@ model Course {
 }
 
 model CorseRequest {
-  id                  String           @id @db.Uuid
-  city                String
-  reqTeacherGender    ReqTeacherGender @default(ALL) @map("req_teacher_gender")
+  id                     String           @id @default(uuid())
+  city                   String
+  reqTeacherGender       ReqTeacherGender @default(ALL) @map("req_teacher_gender")
   reqTeacherVerification ReqTeacherVerif  @default(ALL) @map("req_teacher_verification")
-  corsReqStatus       CourseReqStatus  @default(PENDING) @map("cors_req_status")
-  teachingType        TeachingType     @default(OFFILINE) @map("teaching_type")
-  category            Category         @relation(fields: [categoryId], references: [id])
-  grade               Grade            @relation(fields: [gradeId], references: [id])
-  lesson              Lesson           @relation(fields: [lessonId], references: [id])
-  teacher             Teacher          @relation(fields: [teacherId], references: [id])
-  categoryId          String           @db.Uuid
-  gradeId             String           @db.Uuid
-  lessonId            String           @db.Uuid
-  teacherId           String           @db.Uuid
-  createdAt           DateTime         @default(now())
-  updatedAt           DateTime         @updatedAt
+  corsReqStatus          CourseReqStatus  @default(PENDING) @map("cors_req_status")
+  teachingType           TeachingType     @default(OFFILINE) @map("teaching_type")
+  category               Category         @relation(fields: [categoryId], references: [id])
+  grade                  Grade            @relation(fields: [gradeId], references: [id])
+  lesson                 Lesson           @relation(fields: [lessonId], references: [id])
+  teacher                Teacher          @relation(fields: [teacherId], references: [id])
+  categoryId             String
+  gradeId                String
+  lessonId               String
+  teacherId              String
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
 }
 
 model Category {
-  id           String         @id @db.Uuid
+  id           String         @id @default(uuid())
   categoryName String         @map("category_name")
   teachers     Teacher[]
   CorseRequest CorseRequest[]
   Grade        Grade?         @relation(fields: [gradeId], references: [id])
   Lesson       Lesson?        @relation(fields: [lessonId], references: [id])
-  gradeId      String?        @db.Uuid
-  lessonId     String?        @db.Uuid
+  gradeId      String?
+  lessonId     String?
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 }
 
 model Grade {
-  id           String         @id @db.Uuid
+  id           String         @id @default(uuid())
   gradeName    String         @map("grade_name")
   category     Category[]
   teachers     Teacher[]
   Lesson       Lesson?        @relation(fields: [lessonId], references: [id])
-  lessonId     String?        @db.Uuid
+  lessonId     String?
   CorseRequest CorseRequest[]
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 }
 
 model Lesson {
-  id           String         @id @db.Uuid
+  id           String         @id @default(uuid())
   lessonName   String         @map("lesson_name")
   category     Category[]
   grade        Grade[]
