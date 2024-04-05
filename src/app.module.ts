@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TeacherModule } from './module/teacher/teacher.module';
 import { StudentModule } from './module/student/student.module';
 import { LoggerMiddleware } from './common/utils/logger';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { LoggerMiddleware } from './common/utils/logger';
     }),
     StudentModule,
     TeacherModule,
+    DatabaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
