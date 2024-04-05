@@ -6,6 +6,7 @@ import { TeacherModule } from './module/teacher/teacher.module';
 import { StudentModule } from './module/student/student.module';
 import { LoggerMiddleware } from './common/utils/logger';
 import { DatabaseModule } from './database/database.module';
+import { AuthModule } from './module/auth/auth.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { DatabaseModule } from './database/database.module';
     StudentModule,
     TeacherModule,
     DatabaseModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
